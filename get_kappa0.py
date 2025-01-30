@@ -25,6 +25,9 @@ def k0_LR(df_kappa, colStn, colDist, colKappa):
 
     return all_k0
 
+def k0_RR():
+
+    return None
 
 
 if __name__=='__main__':
