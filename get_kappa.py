@@ -2,7 +2,9 @@ import numpy as np
 import scipy.stats as st
 from k0_calc.miscK import get_FAS
 
-def kappa_Srcrd(acc, dt, npoints, f1, f2):
+# def kappa_Srcrd(acc, dt, npoints, f1, f2):
+
+def kappa_Srcrd(fas, ff, f1, f2):
     '''
     Computes kappa for a single record.
     INPUT: 
@@ -16,7 +18,6 @@ def kappa_Srcrd(acc, dt, npoints, f1, f2):
         - intercept_i
     '''
 
-    fas, ff = get_FAS(acc, dt)
     idx = np.where((f1<=ff) & (ff<=f2))
     results = st.linregress(ff[idx], np.log(fas[idx]))
     lambda_i, intercept_i = results.slope, results.intercept
