@@ -21,6 +21,13 @@ def get_FAS(y, dt):
     return fa_spectrum, fa_frequencies
 
 
+def rotateGM(gm000, gm090, theta):
+
+    gm_r = gm000*np.cos(theta) + gm090*np.sin(theta) # rotated ground motion
+
+    return gm_r
+
+
 def readGP(loc, fname):
     """
     Convenience function for reading files in the Graves and Pitarka format
