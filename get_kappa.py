@@ -67,24 +67,38 @@ def kappa_VH14(acc1, acc2, dt, N, f1, f2):
 
     return kappaVH14
 
-
 def kappa_RMS(acc1, acc2, dt, f1, f2):
+
+    fas000, ff000 = get_FAS(acc1, dt)
+    fas090, ff090 = get_FAS(acc2, dt)
+
+    H_f = np.sqrt(0.5*(fas000**2 + fas090**2))
+
+    kappaRMS, interceptRMS = kappa_1FAS(H_f, ff000, f1, f2)
     
-    kappa000 = kappa_1GMR(acc1, dt, f1, f2)
-    kappa090 = kappa_1GMR(acc2, dt, f1, f2)
+    return kappaRMS
 
-    kappa_RMS = np.sqrt(kappa000*kappa090)
 
-    return kappa_RMS
+def kappa_GM(acc1, acc2, dt, f1, f2):
+    '''
+    Not recommended. It crashes when kappa is negative in one direction. 
+    '''
+    
+    kappa000, intercept_000 = kappa_1GMR(acc1, dt, f1, f2)
+    kappa090, intercept_090 = kappa_1GMR(acc2, dt, f1, f2)
+
+    kappaGM = np.sqrt(kappa000*kappa090)
+
+    return kappaGM
 
 def kappa_AVG(acc1, acc2, dt, f1, f2):
     
-    kappa000 = kappa_1GMR(acc1, dt, f1, f2)
-    kappa090 = kappa_1GMR(acc2, dt, f1, f2)
+    kappa000, intercept000 = kappa_1GMR(acc1, dt, f1, f2)
+    kappa090, intercept090 = kappa_1GMR(acc2, dt, f1, f2)
 
-    kappa_AVG = np.average(kappa000, kappa090)
+    kappaAVG = np.average(kappa000, kappa090)
 
-    return kappa_AVG
+    return kappaAVG
 
 if __name__=='__main__':
 
