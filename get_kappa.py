@@ -9,10 +9,11 @@ def kappa_1GMR(acc, dt, f1, f2):
     fas, ff = get_FAS(acc, dt)
     idx = np.where((f1<=ff) & (ff<=f2))
     results = st.linregress(ff[idx], np.log(fas[idx]))
-    lambda_i, intercept_i = results.slope, results.intercept
-    kappa_i = - lambda_i/np.pi
+    lambda_i, stderr_i = results.slope, results.stderr
+    kappa_avg = - lambda_i/np.pi
+    kappa_stderr = stderr_i/np.pi
 
-    return kappa_i, intercept_i
+    return kappa_avg, kappa_stderr
 
 def kappa_1FAS(fas, ff, f1, f2):
     '''
@@ -20,7 +21,7 @@ def kappa_1FAS(fas, ff, f1, f2):
     INPUT: 
         - acc:
         - dt:
-        - npoints:\Output_v20p10p8
+        - npoints: 
         - f1:
         - f2:
     OUTPUT:
@@ -30,10 +31,11 @@ def kappa_1FAS(fas, ff, f1, f2):
 
     idx = np.where((f1<=ff) & (ff<=f2))
     results = st.linregress(ff[idx], np.log(fas[idx]))
-    lambda_i, intercept_i = results.slope, results.intercept
-    kappa_i = - lambda_i/np.pi
+    lambda_i, stderr_i = results.slope, results.stderr
+    kappa_avg = - lambda_i/np.pi
+    kappa_stderr = stderr_i/np.pi
 
-    return kappa_i, intercept_i
+    return kappa_avg, kappa_stderr
 
 def kappa_VH14(acc1, acc2, dt, N, f1, f2):
     '''
@@ -91,12 +93,10 @@ def kappa_GM(acc1, acc2, dt, f1, f2):
 
     return kappaGM
 
-def kappa_AVG(acc1, acc2, dt, f1, f2):
-    
+def kappa_Mean(acc1, acc2, dt, f1, f2):
     kappa000, intercept000 = kappa_1GMR(acc1, dt, f1, f2)
     kappa090, intercept090 = kappa_1GMR(acc2, dt, f1, f2)
-
-    kappaAVG = np.average(kappa000, kappa090)
+    kappaAVG = np.mean([[kappa000, kappa090]])
 
     return kappaAVG
 
