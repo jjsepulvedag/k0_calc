@@ -5,15 +5,24 @@ from k0_calc.miscK import rotateGM
 
 
 def kappa_1GMR(acc, dt, f1, f2):
+    # Create a DF for storing coefficients and stderrs
+    dfCols = ['Slope', 'Intercept']
+    dfRows = ['Mean', 'Stderr']
+    kappaDF = pd.dataframe(None, index=dfRows, columns=dfCols)
 
+    # Conduct the linear regression
     fas, ff = get_FAS(acc, dt)
     idx = np.where((f1<=ff) & (ff<=f2))
     results = st.linregress(ff[idx], np.log(fas[idx]))
-    lambda_i, stderr_i = results.slope, results.stderr
-    kappa_avg = - lambda_i/np.pi
-    kappa_stderr = stderr_i/np.pi
 
-    return kappa_avg, kappa_stderr
+    # Storing results in the DataFrame
+    # Remember that the direct slope is lambda, which is lambda=-kappa*pi
+    kappaDF['Mean', 'Slope'] = - results.slope/np.pi
+    kappaDF['Stderr', 'Slope'] = results.stderr/np.pi
+    kappaDF['Mean', 'Intercept'] = results.intercept
+    kappaDF['Stderr', 'Intercept'] = results.intercept_stderr
+
+    return kappaDF
 
 def kappa_1FAS(fas, ff, f1, f2):
     '''
@@ -29,13 +38,22 @@ def kappa_1FAS(fas, ff, f1, f2):
         - intercept_i
     '''
 
+    # Create a DF for storing coefficients and stderrs
+    dfCols = ['Slope', 'Intercept']
+    dfRows = ['Mean', 'Stderr']
+    kappaDF = pd.dataframe(None, index=dfRows, columns=dfCols)
+
     idx = np.where((f1<=ff) & (ff<=f2))
     results = st.linregress(ff[idx], np.log(fas[idx]))
-    lambda_i, stderr_i = results.slope, results.stderr
-    kappa_avg = - lambda_i/np.pi
-    kappa_stderr = stderr_i/np.pi
 
-    return kappa_avg, kappa_stderr
+    # Storing results in the DataFrame
+    # Remember that the direct slope is lambda, which is lambda=-kappa*pi
+    kappaDF['Mean', 'Slope'] = - results.slope/np.pi
+    kappaDF['Stderr', 'Slope'] = results.stderr/np.pi
+    kappaDF['Mean', 'Intercept'] = results.intercept
+    kappaDF['Stderr', 'Intercept'] = results.intercept_stderr
+
+    return kappaDF
 
 def kappa_VH14(acc1, acc2, dt, N, f1, f2):
     '''
@@ -58,7 +76,7 @@ def kappa_VH14(acc1, acc2, dt, N, f1, f2):
         - For a dStep of 45°, use N=05
     '''
     thetas = np.radians(np.linspace(0, 180, N))
-    kappas = np.zeros((thetas.shape[0], 1))
+    kappas = np.zeros((thetas.shape[0], 2))
 
     for i in range(thetas.shape[0]):
         acc_r = rotateGM(acc1, acc2, thetas[i]) # get rotated ground motion
