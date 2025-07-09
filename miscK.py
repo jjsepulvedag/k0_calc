@@ -20,6 +20,15 @@ def get_FAS(y, dt):
 
     return fa_spectrum, fa_frequencies
 
+def get_RSM(acc1, acc2, dt):
+
+    fas000, ff000 = get_FAS(acc1, dt)
+    fas090, ff090 = get_FAS(acc2, dt)
+
+    H_f = np.sqrt(0.5*(fas000**2 + fas090**2))
+
+    return H_f, ff000
+
 
 def rotateGM(gm000, gm090, theta):
 
