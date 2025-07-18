@@ -10,7 +10,7 @@ def k0_LR(df_kappa, colStn, colDist, colKappa):
 
     allStns = df_kappa[colStn].unique()
     
-    all_k0 = pd.DataFrame(columns=['stationID', 'k0_mean', 'k0_stderr'])
+    all_k0 = pd.DataFrame(columns=['stationID', 'k0_mean', 'k0_stderr', 'kr_mean', 'kr_stderr'])
     all_k0['stationID'] = allStns
     all_k0.set_index('stationID', inplace=True)
 
@@ -20,6 +20,8 @@ def k0_LR(df_kappa, colStn, colDist, colKappa):
 
         all_k0.loc[stn, 'k0_mean'] = np.round(lin_reg.intercept, 5)
         all_k0.loc[stn, 'k0_stderr'] = np.round(lin_reg.intercept_stderr, 5)
+        all_k0.loc[stn, 'kr_mean'] = np.round(lin_reg.slope, 5)
+        all_k0.loc[stn, 'kr_stderr'] = np.round(lin_reg.stderr, 5)
 
     all_k0.reset_index(inplace=True)
 
