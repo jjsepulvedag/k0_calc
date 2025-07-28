@@ -2,6 +2,10 @@ import numpy as np
 import pandas as pd
 import scipy.stats as st
 
+
+
+
+
 def k0_LR(df_kappa, colStn, colDist, colKappa):
     '''
     df_kappa: pandas dataframe with (at least) these three columns

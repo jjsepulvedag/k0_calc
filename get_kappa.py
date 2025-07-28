@@ -5,6 +5,16 @@ from k0_calc.miscK import get_FAS
 from k0_calc.miscK import rotateGM
 
 
+
+def krBB_GMR(acc, dt, M0, R, rho, Vs, fc):
+
+    
+    return None
+
+def krBB_FAS():
+    return None
+
+
 def kappa_1GMR(acc, dt, f1, f2):
     # Create a DF for storing coefficients and stderrs
     dfCols = ['Kappa', 'Intercept']
@@ -55,6 +65,10 @@ def kappa_1FAS(fas, ff, f1, f2):
     linRegDF.loc['Stderr', 'Intercept'] = results.intercept_stderr
 
     return linRegDF
+
+
+
+
 
 def kappa_VH14(acc1, acc2, dt, N, f1, f2):
     '''

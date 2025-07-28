@@ -1,6 +1,16 @@
 import numpy as np
 
 
+def Mw_to_M0(M_w):
+
+    M0 = None
+    return M0
+
+def Ml_to_M0(Ml):
+
+    M0 = None
+    return M0
+
 def get_FAS(y, dt):
     """
     Returns Fourier amplitude spectrum of a time series.
