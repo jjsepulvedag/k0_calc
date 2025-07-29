@@ -1,15 +1,62 @@
 import numpy as np 
 import pandas as pd
+import matplotlib.pyplot as plt
 import scipy.stats as st
+from scipy.optimize import curve_fit
+
 from k0_calc.miscK import get_FAS
 from k0_calc.miscK import rotateGM
+from k0_calc.miscK import ln_Omega2Model
 
 
+def krBB_GMR(acc, dt, flow, fupp, R, rho, Vs):
 
-def krBB_GMR(acc, dt, M0, R, rho, Vs, fc):
+    S_fas, S_ffi = get_FAS(acc, dt)
+    # S_ffi = np.where(S_ffi <= 0, 1e-10, S_ffi)
+    ln_S_fas = np.log(S_fas + 1e-20)
+
+    # 
+    mask = (S_ffi > flow) & (S_ffi < fupp)
+    fit_freq = S_ffi[mask]
+    fit_ln_spectrum = ln_S_fas[mask]
+    
+    p0 = [1e16, 0.03] # M0, kappa initial guesses
+    bounds = [[1e10, 0.005], [1e30, 0.5]] # M0, kappa
+
+    fcs = np.linspace(0.01, 100, 500)
+    leastSquareDF = pd.DataFrame(fcs, columns=['fci'])
+    leastSquareDF[['M0', 'kappa', 'Chi']] = np.nan
+
+    for i in range(leastSquareDF.shape[0]):
+        fci = leastSquareDF.loc[i, 'fci']
+        fit_funct = lambda fi, M0, kappa: ln_Omega2Model(fi, fci, M0, rho, Vs, R, kappa)
+
+        # popt, pcov = curve_fit(fit_funct, fit_freq, fit_ln_spectrum, p0=p0, bounds=bounds)
+        popt, pcov = curve_fit(fit_funct, fit_freq, fit_ln_spectrum)
+        
+        leastSquareDF.loc[i, ['M0', 'kappa']] = popt
+
+        M_fi = ln_Omega2Model(fit_freq, fci, popt[0], rho, Vs, R, popt[1])
+
+        leastSquareDF.loc[i, 'Chi'] = np.sum((fit_ln_spectrum - M_fi)**2) / fit_freq.shape[0]
+
+    print(leastSquareDF)
+
+    minChi = leastSquareDF['Chi'].idxmin()
+    fc_fit = leastSquareDF.loc[minChi, 'fci']
+    M0_fit = leastSquareDF.loc[minChi, 'M0']
+    kappa_fit = leastSquareDF.loc[minChi, 'kappa']
 
     
-    return None
+    
+    fas_Omega = np.exp(ln_Omega2Model(fit_freq, fc_fit, M0_fit, rho, Vs, R, kappa_fit))
+    plt.plot(fit_freq, np.exp(fit_ln_spectrum), color='tab:blue', linewidth=0.5)
+    plt.plot(fit_freq, fas_Omega, color='tab:red', linewidth=0.5)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.show()
+
+    return [fc_fit, M0_fit, kappa_fit]
 
 def krBB_FAS():
     return None

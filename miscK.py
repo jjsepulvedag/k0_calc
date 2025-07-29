@@ -39,6 +39,21 @@ def get_RSM(acc1, acc2, dt):
 
     return H_f, ff000
 
+def ln_Omega2Model(fi, fc, M0, rho, Vs, R, kappa):
+    '''
+    Model from Brune (1970) with the modification of Anderson (1976)
+    Input: 
+    rho: density (gm/cm3)
+    beta: shear-wave velocity (km/sec)
+    '''
+    gamma = 2 # omega square model
+    
+    ln_A0 = np.log( 0.85 * M0 / (4 * np.pi * rho * Vs**3 * R) )
+    ln_path = - np.pi * kappa * fi
+    ln_source = np.log( (2 * np.pi * fi)**2 / (1 + (fi/fc)**gamma) )
+
+    return ln_A0 + ln_path + ln_source
+
 
 def rotateGM(gm000, gm090, theta):
 
