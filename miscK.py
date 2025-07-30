@@ -1,9 +1,19 @@
 import numpy as np
 
 
-def Mw_to_M0(M_w):
+def M0_to_Mw(M0):
+    '''
+    Equation proposed by Hanks and Kanamori (1979)
+    M0 in dyne-cm
+    '''
+    Mw = (2/3)*np.log10(M0)-10.7
+    return Mw
 
-    M0 = None
+def Mw_to_M0(Mw):
+    '''
+    Inverse of the equation proposed by Hanks and Kanamori (1979)
+    '''
+    M0 = 10**((3/2)*(Mw+10.7))
     return M0
 
 def Ml_to_M0(Ml):
